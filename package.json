@@ -26,6 +26,7 @@
     "eject": "react-scripts eject",
     "dev": "vite --force",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint-fix": "eslint src --fix --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "dependencies": "node ./scripts/copy-novorender-workers.js"
   },
