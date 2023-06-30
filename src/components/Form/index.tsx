@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 type Props = {
   handleSearch: (value: string) => void;
@@ -6,12 +6,15 @@ type Props = {
 
 export const Form = ({ handleSearch }: Props ) => {
   const [value, setValue] = useState('');
-  const handleSubmit = () => handleSearch(value);
-  const handleChange = (event: any) => {
-    setValue(event.target.value)
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleSearch(value);
+  };
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
   }
 
-  return <form className="form">
+  return <form className="form" onSubmit={handleSubmit}>
     <input
       className="form-control"
       name='form-input'
@@ -20,6 +23,6 @@ export const Form = ({ handleSearch }: Props ) => {
       onChange={handleChange}
       placeholder="Text"
     />
-    <button type="button" onClick={handleSubmit}>Search</button>
+    <button type="submit">Search</button>
   </form>
 }

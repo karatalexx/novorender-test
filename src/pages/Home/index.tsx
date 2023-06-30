@@ -4,7 +4,7 @@ import { Canvas } from '../../components/Canvas';
 import { Form } from '../../components/Form';
 import { ButtonPosition } from '../../components/ButtonPosition';
 import { useScene } from '../../hooks/useCanvas';
-import { renderView } from '../../helpers/renderView';
+import { renderView, isolateObjects } from '../../helpers';
 
 type Positions = {
   [key: string]: {
@@ -44,8 +44,19 @@ export const Home = () => {
     }
   }
 
-  const handleSearch = (value: string) => {
-    console.log(value);
+  const handleSearch = async (value: string) => {
+    if (!view?.scene) {
+      return;
+    }
+
+    const iterator = view.scene.search({ searchPattern: value });
+    const result: number[] = [];
+
+    for await (const object of iterator) {
+      result.push(object.id);
+    }
+
+    isolateObjects(view.scene, result);
   }
 
   return <div className='home'>
@@ -56,6 +67,5 @@ export const Home = () => {
       <Form handleSearch={handleSearch} />
     </div>
     <Canvas ref={ref} />
-    <input type="text"/>
   </div>
 }
