@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 
 type Props = {
-  handleSearch: (value: string) => void;
+  handleSearch: (value: string) => Promise<void>;
 }
 
 export const Form = ({ handleSearch }: Props ) => {
   const [value, setValue] = useState('');
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handleSearch(value);
+    void handleSearch(value);
   };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
   }

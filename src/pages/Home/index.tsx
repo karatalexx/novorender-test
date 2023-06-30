@@ -17,11 +17,11 @@ export const Home = () => {
   const ref = useRef<null | HTMLCanvasElement>(null);
   const [positions, setPositions] = useState<Positions>({});
   const [abortController, setAbortController] = useState<AbortController | null>(null);
-  const { view } = useScene(ref);
+  const view = useScene(ref);
 
   useEffect(() => {
     if (view && ref.current) {
-      renderView(view, ref.current)
+      void renderView(view, ref.current)
     }
   }, [view]);
 
@@ -39,7 +39,7 @@ export const Home = () => {
     }
   }
 
-  const handleMoveToPosition = async (number: string) => {
+  const handleMoveToPosition = (number: string) => {
     if (positions[number] && view) {
       view.camera.controller.moveTo(positions[number].position, positions[number].rotation);
     }

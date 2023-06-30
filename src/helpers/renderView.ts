@@ -14,7 +14,7 @@ export const renderView = async (view: View, canvas: HTMLCanvasElement): Promise
   resizeObserver.observe(canvas);
 
   const ctx = canvas.getContext("bitmaprenderer");
-
+  // eslint-disable-next-line
   while (true) {
 
     const output = await view.render();

@@ -1,17 +1,16 @@
-import { API as WebglAPI, createAPI as createWebglAPI } from '@novorender/webgl-api';
-import { API as DataAPI } from '@novorender/data-js-api';
-import { SceneData } from '../types';
+import { API as WebglAPI, createAPI as createWebglAPI, View } from '@novorender/webgl-api';
+import { API as DataAPI, SceneData, SceneLoadFail } from '@novorender/data-js-api';
 
-export const loadScene = async (dataApi: DataAPI, canvas: HTMLCanvasElement): Promise<SceneData | undefined> => {
+export const loadScene = async (dataApi: DataAPI, canvas: HTMLCanvasElement): Promise<View | undefined> => {
   try {
-    const sceneData: any = await dataApi
-      .loadScene("3b5e65560dc4422da5c7c3f827b6a77c")
-      .then((res: any) => {
+    const sceneData: SceneData = await dataApi
+      .loadScene(import.meta.env.VITE_SCENE_ID as string)
+      .then((res: SceneData | SceneLoadFail) => {
         if ("error" in res) {
           throw res;
-        } else {
-          return res;
         }
+
+        return res;
       });
 
     const { url, db, settings, camera: cameraParams } = sceneData;
@@ -20,15 +19,17 @@ export const loadScene = async (dataApi: DataAPI, canvas: HTMLCanvasElement): Pr
     const scene = await api.loadScene(url, db);
     const view = await api.createView(settings, canvas);
 
-
     const neutral = api.createHighlight({
       kind: "neutral",
     });
 
-    // @ts-ignore
-    view.applySettings({ quality: { resolution: { value: 1 } }, objectHighlights: [neutral] });
+    view.applySettings({
+        quality: { resolution: { value: 1 } },
+        objectHighlights: [neutral]
+      });
 
-    const camera = cameraParams ?? ({ kind: "flight" } as any);
+    const camera = cameraParams ?? ({ kind: "flight" });
+
     view.camera.controller = api.createCameraController({
       ...camera,
       kind: 'flight',
@@ -36,9 +37,7 @@ export const loadScene = async (dataApi: DataAPI, canvas: HTMLCanvasElement): Pr
 
     view.scene = scene;
 
-    return {
-      view,
-    }
+    return view;
   } catch (e) {
     console.warn(e);
   }

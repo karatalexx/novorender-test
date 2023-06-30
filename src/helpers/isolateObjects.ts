@@ -8,5 +8,5 @@ export const isolateObjects = (scene: Scene, ids: number[]): void => {
     scene.objectHighlighter.objectHighlightIndices.fill(0);
   }
 
-  scene.objectHighlighter.commit();
+  void scene.objectHighlighter.commit();
 }

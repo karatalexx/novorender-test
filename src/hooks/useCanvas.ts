@@ -1,28 +1,26 @@
 import {RefObject, useEffect, useMemo, useState} from 'react';
+import { View } from '@novorender/webgl-api';
 import { API as DataAPI, createAPI as createDataAPI } from '@novorender/data-js-api';
-import { SceneData } from '../types'
 import { loadScene } from '../helpers';
 
-export const useScene = (ref: RefObject<HTMLCanvasElement> | null): SceneData | { view: null } => {
-  const [sceneData, setSceneData] = useState<null | SceneData>(null)
+export const useScene = (ref: RefObject<HTMLCanvasElement> | null): View | null => {
+  const [sceneView, setSceneView] = useState<null | View>(null)
 
   const dataApi: DataAPI = useMemo(() => createDataAPI({
-    serviceUrl: "https://data.novorender.com/api",
+    serviceUrl: import.meta.env.VITE_SERVICE_URL as string,
   }), []);
 
   useEffect(() => {
     if (ref?.current) {
       const canvas = ref.current
 
-      loadScene(dataApi, canvas).then((data: SceneData | undefined) => {
-        if (data) {
-          setSceneData(data)
+      void loadScene(dataApi, canvas).then((view: View | undefined) => {
+        if (view) {
+          setSceneView(view)
         }
       });
     }
   }, [ref, dataApi]);
 
-  return sceneData ? {
-    ...sceneData,
-  } : { view: null };
+  return sceneView || null;
 }
