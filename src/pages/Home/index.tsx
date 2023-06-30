@@ -16,6 +16,7 @@ type Positions = {
 export const Home = () => {
   const ref = useRef<null | HTMLCanvasElement>(null);
   const [positions, setPositions] = useState<Positions>({});
+  const [abortController, setAbortController] = useState<AbortController | null>(null);
   const { view } = useScene(ref);
 
   useEffect(() => {
@@ -49,7 +50,15 @@ export const Home = () => {
       return;
     }
 
-    const iterator = view.scene.search({ searchPattern: value });
+    if (abortController) {
+      abortController.abort();
+    }
+
+    const controller: AbortController = new AbortController();
+    setAbortController(() => controller);
+
+    const signal = controller.signal;
+    const iterator = view.scene.search({ searchPattern: value }, signal);
     const result: number[] = [];
 
     for await (const object of iterator) {
